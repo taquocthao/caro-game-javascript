@@ -32,6 +32,7 @@ function initBoard(widthBoard, heightBoard) {
 }
 
 function initEvent() {
+    // event tick on cell
     var cells = document.querySelectorAll(".cell");
     cells.forEach(cell => {
         cell.addEventListener("click", function() {
@@ -41,9 +42,17 @@ function initEvent() {
 }
 
 function tick(element) {
+    
+    var image = document.createElement("img");
+    image.classList = "image-fluid";
+
     if(myTurn) {
-        element.style.backgroundImage = "URL('./image/red.png')";
+        image.src = "./image/red.png";
+        myTurn = false;
     } else {
-        element.style.backgroundImage = "URL('./image/black.png')"
+        image.src = "./image/black.png";
+        myTurn = true;
     }
+
+    element.appendChild(image);
 }

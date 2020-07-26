@@ -23,3 +23,9 @@
     margin: 0 2px;
 }
 
+.image-fluid {
+    display: block;
+    margin-left: auto;
+    margin-top: auto;
+    width: 50%;
+}

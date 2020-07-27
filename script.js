@@ -1,5 +1,5 @@
 var gameOn = false;
-var myTurn = true;
+var opponentTurn = false;
 
 window.addEventListener("DOMContentLoaded", function() {
     initBoard(24, 24);
@@ -16,6 +16,8 @@ function initBoard(widthBoard, heightBoard) {
         for(columnIndex = 0; columnIndex < widthBoard; columnIndex++) {
             var cell = document.createElement("span");
             cell.className = "cell";
+            cell.dataset.column = columnIndex;
+            cell.dataset.row = rowIndex;
             row.appendChild(cell);
         }
         board.appendChild(row);
@@ -42,17 +44,75 @@ function initEvent() {
 }
 
 function tick(element) {
-    
+    //1. check exist in cell
+    if(element.hasChildNodes()) {
+        return;
+    }
+
+    //2. render image
     var image = document.createElement("img");
     image.classList = "image-fluid";
 
-    if(myTurn) {
+    if(opponentTurn) {
         image.src = "./image/red.png";
-        myTurn = false;
+        image.classList.add("red");
+        element.dataset.flag = "red";
+        opponentTurn = false;
     } else {
         image.src = "./image/black.png";
-        myTurn = true;
+        image.classList.add("black");
+        element.dataset.flag = "black";
+        opponentTurn = true;
     }
 
     element.appendChild(image);
+
+    //3. calculate result
+    evaluateResult(element);
 }
+
+function evaluateResult(element) {
+    let currentRow = Number.parseInt(element.dataset.row);
+    let currentColumn = Number.parseInt(element.dataset.column);
+    let imageFlag = element.dataset.flag;
+
+    // Vertical evaluation
+    let verticalPoint = evaluateVertical(imageFlag, currentRow, currentColumn);
+    if(verticalPoint >= 5) {
+        
+        endGame();
+
+    }
+    // horizontal evaluation
+
+    // slash evaluation
+
+    // back slash evaluation
+
+}
+
+function evaluateVertical(flag, row, column) {
+    var totalPoint = 0;
+    // bellow current row
+    for (let index = 0; index < 5; index++) {
+        var nextElement = document.querySelector("[data-column = '"+ column +"'][data-row='"+ (row + index) +"']");
+        if(!nextElement || (nextElement.dataset.flag !== flag)) {
+            break;
+        }
+        totalPoint++;
+    }
+    // above current row
+    for (let index = 0; index < 5; index++) {
+        var nextElement = document.querySelector("[data-column = '"+ column +"'][data-row='"+ (row - index - 1) +"']");
+        if(!nextElement || (nextElement.dataset.flag !== flag)) {
+            break;
+        }
+        totalPoint++;
+    }
+    return totalPoint;
+}
+
+ function endGame() {
+     gameOn = false;
+     // reset board;
+ }

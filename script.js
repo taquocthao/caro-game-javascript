@@ -1,4 +1,4 @@
-var gameOn = false;
+var gameOn = true;
 var opponentTurn = false;
 
 window.addEventListener("DOMContentLoaded", function() {
@@ -44,8 +44,9 @@ function initEvent() {
 }
 
 function tick(element) {
-    //1. check exist in cell
-    if(element.hasChildNodes()) {
+
+    //1. check game on or exist flag in cell
+    if(!gameOn || element.hasChildNodes()) {
         return;
     }
 
@@ -79,20 +80,30 @@ function evaluateResult(element) {
     // Vertical evaluation
     let verticalPoint = evaluateVertical(imageFlag, currentRow, currentColumn);
     if(verticalPoint >= 5) {
-        
         endGame();
-
     }
+
     // horizontal evaluation
+    let horizontalPoint = evaluateHorizontal(imageFlag, currentRow, currentColumn);
+    if(horizontalPoint >= 5) {
+        endGame();
+    }
 
     // slash evaluation
+    let slashPoint = evaluateSlash(imageFlag, currentRow, currentColumn);
+    if(slashPoint >= 5) {
+        endGame();
+    }
 
     // back slash evaluation
-
+    let backSlashPoint = evaluateBackSlash(imageFlag, currentRow, currentColumn);
+    if(backSlashPoint >= 5) {
+        endGame();
+    }
 }
 
 function evaluateVertical(flag, row, column) {
-    var totalPoint = 0;
+    let totalPoint = 0;
     // bellow current row
     for (let index = 0; index < 5; index++) {
         var nextElement = document.querySelector("[data-column = '"+ column +"'][data-row='"+ (row + index) +"']");
@@ -112,7 +123,73 @@ function evaluateVertical(flag, row, column) {
     return totalPoint;
 }
 
+
+function evaluateHorizontal(flag, row, column) {
+    let totalPoint = 0;
+    // left current column
+    for (let index = 0; index < 5; index++) {
+        var nextElement = document.querySelector("[data-column = '"+ (column - index) +"'][data-row='"+ row +"']");
+        if(!nextElement || (nextElement.dataset.flag !== flag)) {
+            break;
+        }
+        totalPoint++;
+    }
+    // right current column
+    for (let index = 0; index < 5; index++) {
+        var nextElement = document.querySelector("[data-column = '"+ (column + index + 1) +"'][data-row='"+ row +"']");
+        if(!nextElement || (nextElement.dataset.flag !== flag)) {
+            break;
+        }
+        totalPoint++;
+    }
+    return totalPoint;
+}
+
+function evaluateSlash(flag, row, column) {
+    let totalPoint = 0;
+    // above
+    for (let index = 0; index < 5; index++) {
+        var nextElement = document.querySelector("[data-column = '"+ (column - index) +"'][data-row='"+ (row - index) +"']");
+        if(!nextElement || (nextElement.dataset.flag !== flag)) {
+            break;
+        }
+        totalPoint++;
+    }
+    // below
+    for (let index = 0; index < 5; index++) {
+        var nextElement = document.querySelector("[data-column = '"+ (column + index + 1) +"'][data-row='"+ (row + index + 1) +"']");
+        if(!nextElement || (nextElement.dataset.flag !== flag)) {
+            break;
+        }
+        totalPoint++;
+    }
+    return totalPoint;
+}
+
+function evaluateBackSlash(flag, row, column) {
+    let totalPoint = 0;
+    // above
+    for (let index = 0; index < 5; index++) {
+        var nextElement = document.querySelector("[data-column = '"+ (column + index) +"'][data-row='"+ (row - index) +"']");
+        if(!nextElement || (nextElement.dataset.flag !== flag)) {
+            break;
+        }
+        totalPoint++;
+    }
+    // below
+    for (let index = 0; index < 5; index++) {
+        var nextElement = document.querySelector("[data-column = '"+ (column - (index + 1)) +"'][data-row='"+ (row + index + 1) +"']");
+        if(!nextElement || (nextElement.dataset.flag !== flag)) {
+            break;
+        }
+        totalPoint++;
+    }
+    return totalPoint;
+}
+
+
+
  function endGame() {
-     gameOn = false;
+    gameOn = false;
      // reset board;
  }
